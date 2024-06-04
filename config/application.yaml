@@ -11,7 +11,7 @@ mysql:
   # 数据库名称 需要提前创建好
   DbName: go-easy-admin
   DbUser: root
-  DbPwd: xxxx3
+  DbPwd: Lykadmin@123
   MaxIdleConns: 10
   MaxOpenConns: 100
   # 是否开启debug，1 开启 0 关闭

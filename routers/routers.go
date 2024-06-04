@@ -26,6 +26,11 @@ func BaseRouters() *gin.Engine {
 	}))
 	// 开启全部跨域允许
 	r.Use(middles.Cors())
+	authMiddleware, err := middles.InitAuth()
+	if err != nil {
+		global.TPLogger.Error("初始化JWT中间件失败: ", err)
+		panic(fmt.Sprintf("初始化JWT中间件失败：%v", err))
+	}
 	// 健康检查
 	r.GET("/health", func(ctx *gin.Context) {
 		global.ReturnContext(ctx).Successful("success", "success")
@@ -34,12 +39,12 @@ func BaseRouters() *gin.Engine {
 	// 不需要做鉴权的接口 PublicGroup
 	PublicGroup := r.Group("/api/base")
 	{
-		system.InitBaseRouters(PublicGroup)
+		system.InitBaseRouters(PublicGroup, authMiddleware)
 	}
 	// 需要做鉴权的接口
-	//PrivateGroup := r.Group("/api/system")
-	//{
-	//	system.InitUserRouters(PrivateGroup)
-	//}
+	PrivateGroup := r.Group("/api/system")
+	{
+		system.InitUserRouters(PrivateGroup, authMiddleware)
+	}
 	return r
 }

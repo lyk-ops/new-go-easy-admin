@@ -9,8 +9,12 @@ import (
 
 // 用户详情
 func GetUserInfo(ctx *gin.Context) {
-	idStr, _ := ctx.GetQuery("id")
-	data, err := service.NewUserInfo().UserInfo(idStr)
+	id := ctx.Keys["id"]
+	if id == nil {
+		global.ReturnContext(ctx).Failed("failed", "用户ID不能为空")
+		return
+	}
+	data, err := service.NewUserInfo().UserInfo(id)
 	if err != nil {
 		global.ReturnContext(ctx).Failed("failed", err.Error())
 		return

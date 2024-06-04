@@ -8,13 +8,14 @@ import (
 	"new-go-edas-admin/common/global"
 	dao "new-go-edas-admin/dao/system"
 	mod "new-go-edas-admin/models/system"
+	"reflect"
 	"strconv"
 )
 
 type InterfaceUsers interface {
 	ExitUser(userName, password string) (*mod.User, error)
 	LdapLogin(userName, password string) (*mod.User, error)
-	UserInfo(id string) (*mod.User, error)
+	UserInfo(id interface{}) (*mod.User, error)
 	UserList(username string, limit, page int) (*mod.UserList, error)
 	UserUpdate(userData *mod.User) error
 	UserAdd(user *mod.User) error
@@ -35,13 +36,17 @@ func (u *userInfo) ExitUser(userName, password string) (*mod.User, error) {
 
 // 用户详情
 
-func (u *userInfo) UserInfo(id string) (*mod.User, error) {
-	idInt, err := strconv.Atoi(id)
+func (u *userInfo) UserInfo(id interface{}) (*mod.User, error) {
+	idUint := fmt.Sprintf("%d", id)
+	fmt.Println("idUint类型：", reflect.TypeOf(idUint), "value:%s", idUint)
+	idInt, err := strconv.Atoi(idUint)
+	fmt.Println("idInt类型：", reflect.TypeOf(idInt), "value:%s", idInt)
 	if err != nil {
-		global.TPLogger.Error("用户详情查看失败：", err)
+		fmt.Printf("err", err)
+		global.TPLogger.Error("用户详情查看失败：")
 		return nil, errors.New("用户详情查看失败")
 	}
-	data, err := dao.NewUserInterface().UserInfo(uint(idInt))
+	data, err := dao.NewUserInterface().UserInfo(idInt)
 	if err != nil {
 		global.TPLogger.Error("用户详情查看失败：", err)
 		return nil, errors.New("用户详情查看失败")

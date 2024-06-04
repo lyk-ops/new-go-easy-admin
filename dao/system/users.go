@@ -11,7 +11,7 @@ import (
 type InterfaceUsers interface {
 	ExitUser(userName, password string) (*system.User, error)
 	Register(user *system.User) error
-	UserInfo(id uint) (*system.User, error)
+	UserInfo(id int) (*system.User, error)
 	UserList(username string, limit, page int) (*system.UserList, error)
 	GetUserFromUserName(userName string) (*system.User, error)
 	UserUpdate(userData *system.User) error
@@ -54,7 +54,7 @@ func (u *userInfo) Register(user *system.User) error {
 }
 
 // 用户详情
-func (u *userInfo) UserInfo(id uint) (*system.User, error) {
+func (u *userInfo) UserInfo(id int) (*system.User, error) {
 	var user system.User
 	err := global.GORM.Where("id = ?", id).Preload("Role").Preload("Dept").First(&user).Error
 	return &user, err
