@@ -38,6 +38,22 @@ func (u *userInfo) ExitUser(username, password string) (*system.User, error) {
 	return user, err
 }
 
+// 用户添加
+func (u *userInfo) UserAdd(user *system.User) error {
+	if user.Password == "" {
+		originPassword := user.Password
+		encryptPassword, err := utils.EncryptAES(originPassword)
+		if err != nil {
+			return err
+		}
+		user.Password = encryptPassword
+	}
+	if err := global.GORM.Create(&user).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
 // 用户注册
 func (u *userInfo) Register(user *system.User) error {
 	originPassword := user.Password
@@ -91,22 +107,6 @@ func (u *userInfo) GetUserFromUserName(username string) (*system.User, error) {
 // 用户更新
 func (u *userInfo) UserUpdate(userData *system.User) error {
 	if err := global.GORM.Model(&system.User{}).Where("id=?", userData.ID).Updates(&userData).Error; err != nil {
-		return err
-	}
-	return nil
-}
-
-// 用户添加
-func (u *userInfo) UserAdd(user *system.User) error {
-	if user.Password == "" {
-		originPassword := user.Password
-		encryptPassword, err := utils.EncryptAES(originPassword)
-		if err != nil {
-			return err
-		}
-		user.Password = encryptPassword
-	}
-	if err := global.GORM.Create(&user).Error; err != nil {
 		return err
 	}
 	return nil

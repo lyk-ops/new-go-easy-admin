@@ -79,7 +79,7 @@ func (u *userInfo) UserUpdate(userData *mod.User) error {
 // 用户添加
 
 func (u *userInfo) UserAdd(user *mod.User) error {
-	err := dao.NewUserInterface().UserAdd(user)
+	err := dao.NewUserInterface().Register(user)
 	if err != nil {
 		global.TPLogger.Error("用户添加失败：", err)
 		return errors.New("用户添加失败")
